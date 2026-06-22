@@ -1,5 +1,6 @@
 This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
 
+
 # Vibe Editor
 
 A browser-based coding playground with file management, terminal support, project templates, and AI-powered code completion — all in one interface.
