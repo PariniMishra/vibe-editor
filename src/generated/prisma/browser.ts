@@ -17,4 +17,33 @@ import * as Prisma from './internal/prismaNamespaceBrowser'
 export { Prisma }
 export * as $Enums from './enums'
 export * from './enums';
-
+/**
+ * Model User
+ * 
+ */
+export type User = Prisma.UserModel
+/**
+ * Model Account
+ * 
+ */
+export type Account = Prisma.AccountModel
+/**
+ * Model Playground
+ * 
+ */
+export type Playground = Prisma.PlaygroundModel
+/**
+ * Model StarMark
+ * 
+ */
+export type StarMark = Prisma.StarMarkModel
+/**
+ * Model TemplateFile
+ * 
+ */
+export type TemplateFile = Prisma.TemplateFileModel
+/**
+ * Model ChatMessage
+ * 
+ */
+export type ChatMessage = Prisma.ChatMessageModel
