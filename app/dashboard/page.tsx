@@ -26,7 +26,7 @@ const Page = async () => {
             onDuplicateProject={duplicateProjectById}
           />
         )}
-      </div>
+      </div> 
     </div>
   );
 };

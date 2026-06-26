@@ -1,5 +1,5 @@
 "use client";
-
+import { useRouter } from "next/navigation"
 import Image from "next/image";
 import { format, parseISO } from "date-fns";
 import type { Project } from "../types";
@@ -62,8 +62,7 @@ interface ProjectTableProps {
     data: { title: string; description: string }
   ) => Promise<void>;
   onDeleteProject?: (id: string) => Promise<void>;
-  onDuplicateProject?: (id: string) => Promise<void>;
-  
+onDuplicateProject?: (id: string) => Promise<unknown>;
 }
 
 interface EditProjectData {
@@ -86,7 +85,7 @@ export default function ProjectTable({
     description: "",
   });
   const [isLoading, setIsLoading] = useState(false);
- 
+ const router = useRouter()
 
   const handleEditClick = (project: Project) => {
     setSelectedProject(project);
@@ -172,7 +171,7 @@ export default function ProjectTable({
               <TableHead>Template</TableHead>
               <TableHead>Created</TableHead>
               <TableHead>User</TableHead>
-              <TableHead className="w-[50px]">Actions</TableHead>
+              <TableHead className="w-12.5">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -209,7 +208,7 @@ export default function ProjectTable({
                     <div className="w-8 h-8 rounded-full overflow-hidden">
                       <Image
                         src={project.user.image || "/placeholder.svg"}
-                        alt={project.user.name}
+                       alt={project.user.name ?? ""}
                         width={32}
                         height={32}
                         className="object-cover"
@@ -219,65 +218,47 @@ export default function ProjectTable({
                   </div>
                 </TableCell>
                 <TableCell>
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="icon" className="h-8 w-8">
-                        <MoreHorizontal className="h-4 w-4" />
-                        <span className="sr-only">Open menu</span>
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end" className="w-48">
-                      <DropdownMenuItem asChild>
-                        <MarkedToggleButton markedForRevision={project.Starmark[0]?.isMarked} id={project.id} />
-                      </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
-                        <Link
-                          href={`/playground/${project.id}`}
-                          className="flex items-center"
-                        >
-                          <Eye className="h-4 w-4 mr-2" />
-                          Open Project
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
-                        <Link
-                          href={`/playground/${project.id}`}
-                          target="_blank"
-                          className="flex items-center"
-                        >
-                          <ExternalLink className="h-4 w-4 mr-2" />
-                          Open in New Tab
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem
-                        onClick={() => handleEditClick(project)}
-                      >
-                        <Edit3 className="h-4 w-4 mr-2" />
-                        Edit Project
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() => handleDuplicateProject(project)}
-                      >
-                        <Copy className="h-4 w-4 mr-2" />
-                        Duplicate
-                      </DropdownMenuItem>
-                      <DropdownMenuItem
-                        onClick={() => copyProjectUrl(project.id)}
-                      >
-                        <Download className="h-4 w-4 mr-2" />
-                        Copy URL
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem
-                        onClick={() => handleDeleteClick(project)}
-                        className="text-destructive focus:text-destructive"
-                      >
-                        <Trash2 className="h-4 w-4 mr-2" />
-                        Delete Project
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                <DropdownMenu>
+  <DropdownMenuTrigger className="inline-flex items-center justify-center h-8 w-8 rounded-md hover:bg-accent">
+  <MoreHorizontal className="h-4 w-4" />
+  <span className="sr-only">Open menu</span>
+</DropdownMenuTrigger>
+  <DropdownMenuContent align="end" className="w-48">
+    <MarkedToggleButton
+      markedForRevision={project.Starmark[0]?.isMarked}
+      id={project.id}
+    />
+    <DropdownMenuItem onClick={() => router.push(`/playground/${project.id}`)}>
+      <Eye className="h-4 w-4 mr-2" />
+      Open Project
+    </DropdownMenuItem>
+    <DropdownMenuItem onClick={() => window.open(`/playground/${project.id}`, "_blank")}>
+      <ExternalLink className="h-4 w-4 mr-2" />
+      Open in New Tab
+    </DropdownMenuItem>
+    <DropdownMenuSeparator />
+    <DropdownMenuItem onClick={() => handleEditClick(project)}>
+      <Edit3 className="h-4 w-4 mr-2" />
+      Edit Project
+    </DropdownMenuItem>
+    <DropdownMenuItem onClick={() => handleDuplicateProject(project)}>
+      <Copy className="h-4 w-4 mr-2" />
+      Duplicate
+    </DropdownMenuItem>
+    <DropdownMenuItem onClick={() => copyProjectUrl(project.id)}>
+      <Download className="h-4 w-4 mr-2" />
+      Copy URL
+    </DropdownMenuItem>
+    <DropdownMenuSeparator />
+    <DropdownMenuItem
+      onClick={() => handleDeleteClick(project)}
+      className="text-destructive focus:text-destructive"
+    >
+      <Trash2 className="h-4 w-4 mr-2" />
+      Delete Project
+    </DropdownMenuItem>
+  </DropdownMenuContent>
+</DropdownMenu>
                 </TableCell>
               </TableRow>
             ))}
@@ -287,7 +268,7 @@ export default function ProjectTable({
 
       {/* Edit Project Dialog */}
       <Dialog open={editDialogOpen} onOpenChange={setEditDialogOpen}>
-        <DialogContent className="sm:max-w-[425px]">
+        <DialogContent className="sm:max-w-106.25">
           <DialogHeader>
             <DialogTitle>Edit Project</DialogTitle>
             <DialogDescription>
