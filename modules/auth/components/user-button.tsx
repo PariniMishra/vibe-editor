@@ -20,17 +20,14 @@ const UserButton = () => {
 
   return (
     <DropdownMenu>
-      <DropdownMenuTrigger>
-        <div className={cn("relative rounded-full")}>
-          <Avatar>
-            <AvatarImage src={user?.image!} alt={user?.name!} />
-            <AvatarFallback className="bg-red-500">
-              <User className="text-white" />
-            </AvatarFallback>
-          </Avatar>
-        </div>
-      </DropdownMenuTrigger>
-
+  <DropdownMenuTrigger render={<button className="relative rounded-full" />}>
+  <Avatar>
+    <AvatarImage src={user?.image!} alt={user?.name!} />
+    <AvatarFallback className="bg-red-500">
+      <User className="text-white" />
+    </AvatarFallback>
+  </Avatar>
+</DropdownMenuTrigger>
     <DropdownMenuContent className="mr-4">
       <DropdownMenuItem>
         <span>
