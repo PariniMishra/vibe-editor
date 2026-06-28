@@ -1,32 +1,35 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  reactCompiler: true,
-  images: {
-    remotePatterns: [
+  images:{
+    remotePatterns:[
       {
-        protocol: "https",
-        hostname: "lh3.googleusercontent.com",
-      },
-    ],
+        protocol:"https",
+        hostname:"*",
+        port:'',
+        pathname:"/**"
+      }
+    ]
   },
   async headers() {
     return [
       {
-        source: "/(.*)",
+        // Apply to all routes
+        source: '/:path*',
         headers: [
           {
-            key: "Cross-Origin-Opener-Policy",
-            value: "same-origin",
+            key: 'Cross-Origin-Opener-Policy',
+            value: 'same-origin',
           },
           {
-            key: "Cross-Origin-Embedder-Policy",
-            value: "credentialless",
+            key: 'Cross-Origin-Embedder-Policy',
+            value: 'require-corp',
           },
         ],
       },
     ];
   },
+  reactStrictMode:false
 };
 
 export default nextConfig;
