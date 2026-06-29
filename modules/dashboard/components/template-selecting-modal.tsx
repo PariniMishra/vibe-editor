@@ -312,6 +312,7 @@ const TemplateSelectionModal = ({
                               alt={`${template.name} icon`}
                               width={40}
                               height={40}
+                              style={{ width: "auto", height: "auto" }}
                               className="object-contain"
                             />
                           </div>

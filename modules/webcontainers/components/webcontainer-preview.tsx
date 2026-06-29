@@ -7,9 +7,7 @@ import { Progress } from "@/components/ui/progress";
 
 import { WebContainer } from "@webcontainer/api";
 import { TemplateFolder } from "@/modules/playground/lib/path-to-json";
-import dynamic from "next/dynamic";
-
-const TerminalComponent = dynamic(() => import("./terminal"), { ssr: false });
+import TerminalComponent from "./terminal";
 
 interface WebContainerPreviewProps {
   templateData: TemplateFolder;
@@ -44,7 +42,7 @@ const WebContainerPreview = ({
   const [isSetupInProgress, setIsSetupInProgress] = useState(false);
 
   const terminalRef = useRef<any>(null);
-  const setupStarted = useRef(false);
+
   // Reset setup state when forceResetup changes
   useEffect(() => {
     if (forceResetup) {
@@ -63,24 +61,9 @@ const WebContainerPreview = ({
   }, [forceResetup]);
 
   useEffect(() => {
-  if (instance) {
-    setIsSetupComplete(false)
-    setIsSetupInProgress(false)
-  }
-}, [instance])
-
-  useEffect(() => {
     async function setupContainer() {
-  console.log("setupContainer called", { 
-    hasInstance: !!instance, 
-    isSetupComplete, 
-    isSetupInProgress 
-  })
-  
-  if (!instance || isSetupComplete || isSetupInProgress) {
-    console.log("setupContainer BLOCKED", { instance: !!instance, isSetupComplete, isSetupInProgress })
-    return;
-  }
+      if (!instance || isSetupComplete || isSetupInProgress) return;
+
       try {
         setIsSetupInProgress(true);
         setSetupError(null);
@@ -98,9 +81,8 @@ const WebContainerPreview = ({
                 "🔄 Reconnecting to existing WebContainer session...\r\n"
               );
             }
-            console.log("🚀 Waiting for server-ready event...")
+
             instance.on("server-ready", (port: number, url: string) => {
-              
               if (terminalRef.current?.writeToTerminal) {
                 terminalRef.current.writeToTerminal(
                   `🌐 Reconnected to server at ${url}\r\n`
@@ -210,19 +192,7 @@ const WebContainerPreview = ({
           );
         }
 
-       const startProcess = await instance.spawn("npm", ["run", "start"], {
-  env: {
-    HOST: "0.0.0.0",
-    PORT: "3001",
-    BROWSER: "none",  // prevents opening a browser window
-    CI: "true",       // prevents interactive prompts
-  },
-});
-setTimeout(() => {
-  if (!previewUrl && terminalRef.current?.writeToTerminal) {
-    terminalRef.current.writeToTerminal("⚠️ Server taking longer than expected...\r\n")
-  }
-}, 30000)
+        const startProcess = await instance.spawn("npm", ["run", "start"]);
 
         instance.on("server-ready", (port: number, url: string) => {
           if (terminalRef.current?.writeToTerminal) {

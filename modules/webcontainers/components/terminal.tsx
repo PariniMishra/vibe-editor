@@ -306,13 +306,9 @@ TerminalComponent = forwardRef<TerminalRef, TerminalProps>(({
     // Handle terminal input
     terminal.onData(handleTerminalInput);
 
-    // Initial fit — deferred and guarded so render service is ready
+    // Initial fit
     setTimeout(() => {
-      if (term.current && terminalRef.current && terminalRef.current.offsetWidth > 0) {
-        try {
-          fitAddonInstance.fit();
-        } catch (e) {}
-      }
+      fitAddonInstance.fit();
     }, 100);
 
     // Welcome message
@@ -390,15 +386,11 @@ TerminalComponent = forwardRef<TerminalRef, TerminalProps>(({
   useEffect(() => {
     initializeTerminal();
 
-    // Handle resize — guarded so fit() only runs when terminal is fully ready
+    // Handle resize
     const resizeObserver = new ResizeObserver(() => {
-      if (fitAddon.current && term.current && terminalRef.current && terminalRef.current.offsetWidth > 0) {
+      if (fitAddon.current) {
         setTimeout(() => {
-          if (fitAddon.current && term.current) {
-            try {
-              fitAddon.current.fit();
-            } catch (e) {}
-          }
+          fitAddon.current?.fit();
         }, 100);
       }
     });

@@ -2,15 +2,11 @@ import { useState, useEffect, useCallback } from "react";
 import { WebContainer } from "@webcontainer/api";
 import { TemplateFolder } from "@/modules/playground/lib/path-to-json";
 
-// Global instance — persists across re-renders and strict mode double-invocations
-let globalWebContainerInstance: WebContainer | null = null;
-let isBooting = false;
-
 interface UseWebContainerProps {
   templateData: TemplateFolder;
 }
 
-interface UseWebContaierReturn {
+interface UseWebContainerReturn {
   serverUrl: string | null;
   isLoading: boolean;
   error: string | null;
@@ -21,41 +17,24 @@ interface UseWebContaierReturn {
 
 export const useWebContainer = ({
   templateData,
-}: UseWebContainerProps): UseWebContaierReturn => {
+}: UseWebContainerProps): UseWebContainerReturn => {
   const [serverUrl, setServerUrl] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState<boolean>(true);
   const [error, setError] = useState<string | null>(null);
-  const [instance, setInstance] = useState<WebContainer | null>(
-    globalWebContainerInstance // reuse if already booted
-  );
+  const [instance, setInstance] = useState<WebContainer | null>(null);
 
   useEffect(() => {
     let mounted = true;
 
     async function initializeWebContainer() {
       try {
-        // Reuse existing instance
-        if (globalWebContainerInstance) {
-          setInstance(globalWebContainerInstance);
-          setIsLoading(false);
-          return;
-        }
-
-        // Prevent double-boot from React strict mode
-        if (isBooting) return;
-        isBooting = true;
-
         const webcontainerInstance = await WebContainer.boot();
-
-        globalWebContainerInstance = webcontainerInstance;
-        isBooting = false;
 
         if (!mounted) return;
 
         setInstance(webcontainerInstance);
         setIsLoading(false);
       } catch (error) {
-        isBooting = false;
         console.error("Failed to initialize WebContainer:", error);
         if (mounted) {
           setError(
@@ -72,7 +51,9 @@ export const useWebContainer = ({
 
     return () => {
       mounted = false;
-      // Don't teardown here — let the global instance persist
+      if (instance) {
+        instance.teardown();
+      }
     };
   }, []);
 
@@ -87,7 +68,7 @@ export const useWebContainer = ({
         const folderPath = pathParts.slice(0, -1).join("/");
 
         if (folderPath) {
-          await instance.fs.mkdir(folderPath, { recursive: true });
+          await instance.fs.mkdir(folderPath, { recursive: true }); // Create folder structure recursively
         }
 
         await instance.fs.writeFile(path, content);
@@ -101,15 +82,13 @@ export const useWebContainer = ({
     [instance]
   );
 
-  const destory = useCallback(() => {
-    if (instance) {
-      instance.teardown();
-      setInstance(null);
-      setServerUrl(null);
-      globalWebContainerInstance = null;
-      isBooting = false;
+  const destory = useCallback(()=>{
+    if(instance){
+        instance.teardown()
+        setInstance(null);
+        setServerUrl(null)
     }
-  }, [instance]);
+  },[instance])
 
-  return { serverUrl, isLoading, error, instance, writeFileSync, destory };
+  return {serverUrl , isLoading , error , instance , writeFileSync , destory}
 };
