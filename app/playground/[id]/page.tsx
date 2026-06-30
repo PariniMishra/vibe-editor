@@ -23,7 +23,7 @@ import {
   TooltipTrigger,
 } from "@/components/ui/tooltip";
 import LoadingStep from "@/modules/playground/components/loader";
-import {PlaygroundEditor} from "@/modules/playground/components/playground-editor";
+//import {PlaygroundEditor} from "@/modules/playground/components/playground-editor";
 import { TemplateFileTree } from "@/modules/playground/components/playground-explorer";
 import ToggleAI from "@/modules/playground/components/toggle-ai";
 import { useAISuggestions } from "@/modules/playground/hooks/useAISuggestion";
@@ -34,7 +34,7 @@ import {
   TemplateFile,
   TemplateFolder,
 } from "@/modules/playground/lib/path-to-json";
-import WebContainerPreview from "@/modules/webcontainers/components/webcontainer-preview";
+//import WebContainerPreview from "@/modules/webcontainers/components/webcontainer-preview";
 import { useWebContainer } from "@/modules/webcontainers/hooks/useWebcontainer";
 import {
   AlertCircle,
@@ -57,6 +57,21 @@ import { toast } from "sonner";
 // ...existing code...
 // (stray `asChild` token removed)
 { /* ...existing code continues ... */ }
+
+import dynamic from "next/dynamic";
+
+const PlaygroundEditor = dynamic(
+  () =>
+    import("@/modules/playground/components/playground-editor").then(
+      (mod) => mod.PlaygroundEditor
+    ),
+  { ssr: false }
+);
+
+const WebContainerPreview = dynamic(
+  () => import("@/modules/webcontainers/components/webcontainer-preview"),
+  { ssr: false }
+);
 
 const MainPlaygroundPage = () => {
   const { id } = useParams<{ id: string }>();
