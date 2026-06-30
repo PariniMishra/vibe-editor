@@ -1,13 +1,13 @@
 import type { NextConfig } from "next";
 
 const nextConfig: NextConfig = {
-  images:{
-    remotePatterns:[
+  images: {
+    remotePatterns: [
       {
-        protocol:"https",
-        hostname:"*",
-        port:'',
-        pathname:"/**"
+        protocol: "https",
+        hostname: "*",
+        port: '',
+        pathname: "/**"
       }
     ]
   },
@@ -29,7 +29,10 @@ const nextConfig: NextConfig = {
       },
     ];
   },
-  reactStrictMode:false
+  reactStrictMode: false,
+  outputFileTracingIncludes: {
+    "/api/template/[id]": ["./vibecode-starters/**"],
+  },
 };
 
 export default nextConfig;
