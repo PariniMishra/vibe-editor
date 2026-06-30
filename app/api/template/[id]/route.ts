@@ -44,13 +44,12 @@ const playground = await db.playground.findUnique({
     return Response.json({ error: "Invalid template" }, { status: 404 });
   }
 
-  try {
-    const inputPath = path.join(process.cwd() , templatePath);
-    const outputFile = path.join(process.cwd() , `output/${templateKey}.json`);
+ try {
+    const inputPath = path.join(/* turbopackIgnore: true */ process.cwd(), templatePath);
+    const outputFile = path.join(/* turbopackIgnore: true */ process.cwd(), `output/${templateKey}.json`);
 
-    await saveTemplateStructureToJson(inputPath , outputFile);
+    await saveTemplateStructureToJson(inputPath, outputFile);
     const result = await readTemplateStructureFromJson(outputFile);
-
 
     // Validate the JSON structure before saving
     if (!validateJsonStructure(result.items)) {
@@ -59,10 +58,9 @@ const playground = await db.playground.findUnique({
 
     await fs.unlink(outputFile)
 
-
-      return Response.json({ success: true, templateJson: result }, { status: 200 });
+    return Response.json({ success: true, templateJson: result }, { status: 200 });
   } catch (error) {
-      console.error("Error generating template JSON:", error);
+    console.error("Error generating template JSON:", error);
     return Response.json({ error: "Failed to generate template" }, { status: 500 });
   }
 
